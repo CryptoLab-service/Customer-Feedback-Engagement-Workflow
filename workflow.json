@@ -1,0 +1,517 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "text": "=Item Purchased: {{ $json['Item Purchased'] }} \nFeedback: {{ $json.Feedback }}\nCampaignTarget: {{ $json['Campaign Target'] }}\nFlavour\": {{ $json.Flavour }}\nShould we send a coupon to make the customer happy? Yes/No",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"Headline\",\"Body\",\"SendCoupon\"],\n  \"properties\": {\n    \"Headline\": {\n      \"type\": \"string\"\n    },\n    \"Body\": {\n      \"type\": \"string\"\n    },\n    \"SendCoupon\": {\n      \"type\": \"boolean\"\n    }\n  }\n}",
+        "options": {
+          "systemPromptTemplate": "=Use the provided JSON input to determine the sentiment of the product feedback. Then generate:\n- A Headline\n- A Body (no greeting or salutation)\n- A boolean value for SendCoupon\n\nIf the feedback is negative or suggests dissatisfaction, include a coupon offer in the body. The coupon code will appear below the email.\n\nCampaign Target: {{ $json['Campaign Target'] }}\nFlavour: {{ $json['Flavour'] }}\n\nAvoid any greeting. Be witty, cool, and direct. Acknowledge critique.\n"
+        }
+      },
+      "id": "3b152bdc-acb8-4f37-8b91-1ab02c0e9532",
+      "name": "Information Extractor",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "position": [
+        1120,
+        832
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "errorMessage": "Unexpected Langchain Output"
+      },
+      "id": "716e4281-cf18-4cc7-b5ed-4de0308bf9aa",
+      "name": "AI did fail us1",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        1920,
+        1056
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73989d0e-667f-4227-ab41-4eb1e8c1c10e",
+              "name": "Coupon",
+              "type": "string",
+              "value": "F4k3ItT1llY0uM4k3It"
+            },
+            {
+              "id": "4d86d8c8-1be3-40b0-b4fd-09f9ffc24386",
+              "name": "Coupon Value",
+              "type": "string",
+              "value": "20% of any purchase"
+            },
+            {
+              "id": "f73b8a70-5bf6-45c2-8061-d10f95b199a8",
+              "name": "Coupon Terms",
+              "type": "string",
+              "value": "=Valid until {{ $today.plus({days: 14}).format(\"d. MMM. y\") }} | minimum purchase amount: 20$ "
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "1dc51ad5-e605-4cad-9a5b-3b20eabd9797",
+      "name": "Fake coupon",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2144,
+        1056
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "a95ce7c4-c592-40c7-9dfa-db0e37d5b71f",
+      "name": "AI Output + Prev Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1472,
+        960
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "9b4ced26-dd86-4ae4-8f69-6177ec42c827",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "Headline",
+              "rightValue": ""
+            },
+            {
+              "id": "7723102c-43d2-48df-82f6-5bb45ddf615c",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "Body",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bb0474a1-425c-4a02-a13e-385272091189",
+      "name": "Is the result valid?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1696,
+        960
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "967f37a1-a600-46a2-82cf-f340dd3c7a96",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.SendCoupon }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b39e0b98-6824-4265-94a0-fe12154f2ad4",
+      "name": "Coupon them or not to Coupon them",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1920,
+        864
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json['Body'] }}</p>\n    \n  <div class=\"footer\">\n   <p>\n    Definitely not a real company Lmt.<br>\n    Also not a real street 123<br>\n    Unreal Town\n   </p>  \n</div> \n </div>\n \n  \n</body>\n</html>\n\n<style>\n.logo {\n  margin-top: 20px;\n }\n.container {\n  background-color: #ffffff;\n  font-family: sans-serif;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  margin-top: 30px;\n}\n\np {\n  color: #606060;\n  line-height: 1.6;\n}\n\nh2 {\n  color: #909399;\n  font-size: 20px;\n  font-weight: bold;\n  padding: 8px;\n}\n\n.footer {\n  margin-top: 30px;\n}\n\n.footer > p {\n    font-size: 14px;\n  color: #ccc;\n }\n\n</style>"
+      },
+      "id": "13c4426f-f522-4127-b899-7e6397e18182",
+      "name": "Html Template for our Email",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        2144,
+        640
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "71e36c09-6e24-4eb2-9b1a-4fb3bb4b4536",
+      "name": "The composed E-Mail + Prev Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2368,
+        688
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.output['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json.output['Body'] }}</p>\n    \n    <div class=\"coupon\">\n        <h3>Here's a Coupon for you!<br>\n        {{ $json['Coupon Value'] }}</h3>\n        <h4 class=\"code\">{{ $json['Coupon'] }}</h4>\n        <p>{{ $json['Coupon Terms'] }}</p>\n    </div>\n  <div class=\"footer\">\n   <p>\n    Definitely not a real company Lmt.<br>\n    Also not a real street 123<br>\n    Unreal Town\n   </p>  \n</div> \n </div>\n \n  \n</body>\n</html>\n\n<style>\n.logo {\n  margin-top: 20px;\n }\n.container {\n  background-color: #ffffff;\n  font-family: sans-serif;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  margin-top: 30px;\n}\n\np {\n  color: #606060;\n  line-height: 1.6;\n}\n\nh2 {\n  color: #909399;\n  font-size: 20px;\n  font-weight: bold;\n  padding: 8px;\n}\n\n.coupon {\n  background: #ff6d5a;\n  color: #fff;\n  padding: 20px;\n}\n.coupon p {\n  color: #fff;\n}\n  \n.coupon .code {\n  font-weight: bold;\n  font-size: 24px;\n  font-family: monospace;\n }\n\n.footer {\n  margin-top: 30px;\n}\n\n.footer > p {\n    font-size: 14px;\n  color: #ccc;\n }\n\n</style>"
+      },
+      "id": "a2b6ec8e-1bcf-4216-b9b6-476c0d82f706",
+      "name": "Html Template for our Email with a Coupon",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        2368,
+        1056
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "2d5dd858-cf61-4136-b405-e6ad4a372725",
+      "name": "The composed E-Mail with Coupon + Prev Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2592,
+        928
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "sendTo": "oluwalowojohn@gmail.com",
+        "subject": "={{ $json.output.Headline }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2816,
+        784
+      ],
+      "id": "c79b780b-9b44-4b52-910c-536cad377d63",
+      "name": "Send a message",
+      "webhookId": "82a4eb61-1f62-4823-9dd5-dc9349e9ad48",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "d5ljNKIIRxJqX2vl",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-r1-distill-llama-70b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1056
+      ],
+      "id": "baddf661-db5a-463e-96a6-90af5c8a7b32",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "45vEjqXrgijuDoCV",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "9681490a-68f1-4c6a-86ea-bf2331c3125d",
+      "name": "Start Feedback Processing",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        448,
+        960
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "170Meu2mMgu18B0QBBgmYbtdoI7otN6qHV-wT9BlENCY",
+          "mode": "list",
+          "cachedResultName": "customer data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/170Meu2mMgu18B0QBBgmYbtdoI7otN6qHV-wT9BlENCY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Raw customer data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/170Meu2mMgu18B0QBBgmYbtdoI7otN6qHV-wT9BlENCY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        960
+      ],
+      "id": "4a630df5-2aa9-4490-b287-830bffd187f0",
+      "name": "Fetch Customer Feedback",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wXAfa4Y67s1bUqQ2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ef766db-4ad1-43c7-b621-8ea3ed0a44b2",
+              "name": "Campaign Target",
+              "type": "string",
+              "value": "Engage the Customer"
+            },
+            {
+              "id": "9f9ce88a-a24a-4a27-8b25-25ee85e730d6",
+              "name": "Flavour",
+              "type": "string",
+              "value": "Use a warm, friendly, and slightly playful Nigerian tone. You can use phrases like 'our dear customer', 'well done', or 'you try well' if it fits. Be relatable and appreciative. The goal is to make the customer feel valued and understood. Acknowledge their feedback sincerely."
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "780dd707-4493-4679-9064-acc3c59011f8",
+      "name": "Campaign Parameters (Tone & Target)",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        896,
+        960
+      ],
+      "typeVersion": 3.4
+    }
+  ],
+  "connections": {
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "AI Output + Prev Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fake coupon": {
+      "main": [
+        [
+          {
+            "node": "Html Template for our Email with a Coupon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Output + Prev Data": {
+      "main": [
+        [
+          {
+            "node": "Is the result valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is the result valid?": {
+      "main": [
+        [
+          {
+            "node": "Coupon them or not to Coupon them",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI did fail us1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coupon them or not to Coupon them": {
+      "main": [
+        [
+          {
+            "node": "Html Template for our Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "The composed E-Mail + Prev Data",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Fake coupon",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "The composed E-Mail with Coupon + Prev Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Html Template for our Email": {
+      "main": [
+        [
+          {
+            "node": "The composed E-Mail + Prev Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The composed E-Mail + Prev Data": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Html Template for our Email with a Coupon": {
+      "main": [
+        [
+          {
+            "node": "The composed E-Mail with Coupon + Prev Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "The composed E-Mail with Coupon + Prev Data": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Feedback Processing": {
+      "main": [
+        [
+          {
+            "node": "Fetch Customer Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Customer Feedback": {
+      "main": [
+        [
+          {
+            "node": "Campaign Parameters (Tone & Target)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Campaign Parameters (Tone & Target)": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Output + Prev Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateId": "1978",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db6a6a071dfca2e0d35fcf3e9f98b59e5ea7c188360bda9a81a90f32d133305b"
+  }
+}
