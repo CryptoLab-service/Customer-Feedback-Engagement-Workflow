@@ -1,6 +1,6 @@
-# 🧴 Nigerian-Standard Automated Customer Feedback & Engagement Workflow
+# Customer Feedback & Engagement Workflow
 
-This repository contains an intelligent n8n workflow designed to automate customer feedback analysis and personalized email responses for a Nigerian business. It uses AI to understand customer sentiment, drafts a culturally appropriate response, and can automatically generate and send a promotional coupon via Gmail if the feedback warrants it.
+This repository contains an intelligent n8n workflow designed to automate customer feedback analysis and personalized email responses for businesses. It uses AI to understand customer sentiment, drafts a culturally appropriate response, and can automatically generate and send a promotional coupon via Gmail if the feedback warrants it.
 
 ---
 
