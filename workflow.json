@@ -332,6 +332,117 @@
         1048
       ],
       "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "Manually triggers the workflow to begin.",
+        "height": 240,
+        "width": 192,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        872
+      ],
+      "id": "0dafb506-12ac-4f4f-9231-1b774b9df238",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Sets the AI's instructions for tone (warm, professional and friendly) and campaign goal.",
+        "height": 288,
+        "width": 192,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        824
+      ],
+      "id": "07e6ad54-a613-4841-865d-321668d3ff67",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Fetches the latest customer feedback data from Google Sheets.",
+        "height": 240,
+        "width": 192,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        624,
+        872
+      ],
+      "id": "1f4fbc83-6528-443d-9d5e-34b9b8240d40",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "AI analyzes feedback sentiment and generates a personalized email headline, body, and decides if a coupon is needed.",
+        "height": 464,
+        "width": 304,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        732
+      ],
+      "id": "d2b5f9ea-3ba2-4575-be32-ae7a6dcb247d",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Combines the original customer data with the AI-generated email content.",
+        "height": 256,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        856
+      ],
+      "id": "4d2aeb42-671c-47d0-bd37-19640d0f170c",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Checks if the AI produced valid content. Stops the workflow with an error if it did not.",
+        "height": 256,
+        "width": 198,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1645,
+        856
+      ],
+      "id": "d4b74a3c-c7ed-41dc-be0a-2e2829994777",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "Branches the workflow by sending data down the 'no coupon' or 'with coupon' path based on the AI's decision.",
+        "height": 288,
+        "width": 198
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1869,
+        728
+      ],
+      "id": "3f88b677-20d7-4a91-bc93-057674324f89",
+      "name": "Sticky Note6"
     }
   ],
   "connections": {
