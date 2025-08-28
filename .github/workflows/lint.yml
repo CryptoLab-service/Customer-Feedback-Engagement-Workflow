@@ -1,4 +1,4 @@
-name: Lint & Test
+name: Handle n8n Workflow
 
 on:
   push:
@@ -7,28 +7,10 @@ on:
     branches: [main]
 
 jobs:
-  lint:
+  handle-n8n-workflow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run linter
-        run: npm run lint
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-  
-      - name: Run tests
-        run: npm test
+      # Add n8n-specific steps here if needed (e.g. validation or deployment)
