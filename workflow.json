@@ -1,48 +1,13 @@
 {
   "nodes": [
     {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineByPosition",
-        "options": {}
-      },
-      "id": "71e36c09-6e24-4eb2-9b1a-4fb3bb4b4536",
-      "name": "The composed E-Mail + Prev Data",
-      "type": "n8n-nodes-base.merge",
-      "position": [
-        2368,
-        688
-      ],
-      "typeVersion": 3
-    },
-    {
-      "parameters": {
-        "model": "deepseek/deepseek-r1-distill-llama-70b:free",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
-      "typeVersion": 1,
-      "position": [
-        1200,
-        1056
-      ],
-      "id": "baddf661-db5a-463e-96a6-90af5c8a7b32",
-      "name": "OpenRouter Chat Model",
-      "credentials": {
-        "openRouterApi": {
-          "id": "45vEjqXrgijuDoCV",
-          "name": "OpenRouter account"
-        }
-      }
-    },
-    {
       "parameters": {},
       "id": "9681490a-68f1-4c6a-86ea-bf2331c3125d",
       "name": "Start Feedback Processing",
       "type": "n8n-nodes-base.manualTrigger",
       "position": [
         448,
-        960
+        952
       ],
       "typeVersion": 1
     },
@@ -68,7 +33,7 @@
       "typeVersion": 4.7,
       "position": [
         672,
-        960
+        952
       ],
       "id": "4a630df5-2aa9-4490-b287-830bffd187f0",
       "name": "Fetch Customer Feedback",
@@ -93,7 +58,7 @@
               "id": "9f9ce88a-a24a-4a27-8b25-25ee85e730d6",
               "name": "Flavour",
               "type": "string",
-              "value": "Use a warm, friendly, and slightly playful Nigerian tone. You can use phrases like 'our dear customer', 'well done', or 'you try well' if it fits. Be relatable and appreciative. The goal is to make the customer feel valued and understood. Acknowledge their feedback sincerely."
+              "value": "Use a warm, mix of professional, friendly, relatable and respectful Nigerian tone. You may use phrases like 'our valued customer', 'thank you for your feedback', 'our darling customer', 'well done oh!', 'you do well', or 'na you try pass'.. Be appreciative and empathetic, but maintain a business-appropriate level of formality. Acknowledge the feedback sincerely and assure the customer that their concerns are being addressed. Avoid slang or overly casual language, while still being friendly and engaging."
             }
           ]
         },
@@ -105,17 +70,17 @@
       "type": "n8n-nodes-base.set",
       "position": [
         896,
-        960
+        952
       ],
       "typeVersion": 3.4
     },
     {
       "parameters": {
-        "text": "=Item Purchased: {{ $json['Item Purchased'] }} \nFeedback: {{ $json.Feedback }}\nCampaignTarget: {{ $json['Campaign Target'] }}\nFlavour\": {{ $json.Flavour }}\nShould we send a coupon to make the customer happy? Yes/No",
+        "text": "=Item Purchased: {{ $json['Item Purchased '] }}  \nFeedback: {{ $json.Feedback }}  \nCampaignTarget: {{ $json['Campaign Target'] }}  \nFlavour: {{ $json.Flavour }}  \n\nOur dear customer gave thoughtful feedback on the {{ $json['Item Purchased '] }} — they loved the smooth texture but mentioned the scent fades too quickly. Well done to them for speaking up! Since our campaign goal is to {{ $json['Campaign Target'] }}, and we’re all about making people feel heard and appreciated, we believe a little gift will go a long way.\n\nShould we send a coupon to make the customer happy? **Yes** ✅",
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"Headline\",\"Body\",\"SendCoupon\"],\n  \"properties\": {\n    \"Headline\": {\n      \"type\": \"string\"\n    },\n    \"Body\": {\n      \"type\": \"string\"\n    },\n    \"SendCoupon\": {\n      \"type\": \"boolean\"\n    }\n  }\n}",
         "options": {
-          "systemPromptTemplate": "=Use the provided JSON input to determine the sentiment of the product feedback. Then generate:\n- A Headline\n- A Body (no greeting or salutation)\n- A boolean value for SendCoupon\n\nIf the feedback is negative or suggests dissatisfaction, include a coupon offer in the body. The coupon code will appear below the email.\n\nCampaign Target: {{ $json['Campaign Target'] }}\nFlavour: {{ $json['Flavour'] }}\n\nAvoid any greeting. Use a warm, friendly, and slightly playful Nigerian tone. You can use phrases like 'our dear customer', 'well done', or 'you try well' if it fits. Be relatable and appreciative. The goal is to make the customer feel valued and understood. Acknowledge their feedback sincerely.\n"
+          "systemPromptTemplate": "=Use the provided JSON input to determine the sentiment of the product feedback. Then generate:\n- A Headline that reflects the customer’s experience and tone\n- A Body (no greeting or salutation) that responds sincerely and appreciatively\n- A boolean value for SendCoupon\n\nIf the feedback expresses dissatisfaction, concern, or any negative sentiment, include a mention of a coupon offer in the body text. IMPORTANT: Do not generate any coupon code or discount percentage in the body. The coupon code will be inserted separately below the email. Instead, use a general phrase like \"we have a special offer for you\" or \"please accept a token of our appreciation\". \n\nCampaign Target: {{ $json['Campaign Target'] }}\nFlavour: {{ $json['Flavour'] }}\n\nAvoid any greeting. Use a warm, professional, friendly, slightly playful and respectful Nigerian tone. You may include phrases like \"our dear customer,\" \"well done,\" or \"you try well\" if they fit naturally. Be appreciative and empathetic, but maintain a business-appropriate level of formality. Acknowledge the feedback sincerely and assure the customer that their concerns are being addressed. Avoid overly casual language. The goal is to make the customer feel heard, valued, and understood."
         }
       },
       "id": "3b152bdc-acb8-4f37-8b91-1ab02c0e9532",
@@ -123,7 +88,7 @@
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
       "position": [
         1120,
-        832
+        828
       ],
       "typeVersion": 1
     },
@@ -138,7 +103,7 @@
       "type": "n8n-nodes-base.merge",
       "position": [
         1472,
-        960
+        952
       ],
       "typeVersion": 3
     },
@@ -182,7 +147,7 @@
       "type": "n8n-nodes-base.if",
       "position": [
         1696,
-        960
+        952
       ],
       "typeVersion": 2.2
     },
@@ -195,7 +160,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "position": [
         1920,
-        1056
+        1048
       ],
       "typeVersion": 1
     },
@@ -229,22 +194,9 @@
       "type": "n8n-nodes-base.if",
       "position": [
         1920,
-        864
+        856
       ],
       "typeVersion": 2.2
-    },
-    {
-      "parameters": {
-        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.output['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json.output['Body'] }}</p>\n    \n    <div class=\"coupon\">\n        <h3>Here's a Coupon for you!<br>\n        {{ $json['Coupon Value'] }}</h3>\n        <h4 class=\"code\">{{ $json['Coupon'] }}</h4>\n        <p>{{ $json['Coupon Terms'] }}</p>\n    </div>\n  <div class=\"footer\">\n     <p>\n      <strong>Tolu John Essentials Ltd.</strong><br>\n      Suite 5, Plaza Complex, 24 Central Business District,<br>\n      FCT-Abuja, Abuja, Nigeria.<br>\n      <a href=\"tel:+2347030739128\">+234 703 073 9128</a> | \n      <a href=\"mailto:support@ntjessentials.com\">support@tjessentials.com</a>\n     </p>  \n     <p class=\"unsubscribe\">\n          No longer want these emails? <a href=\"#\">Unsubscribe</a>.\n     </p>\n  </div>\n  </body>\n</html>\n\n<style>\n    body {\n        background-color: #f4f4f4;\n        margin: 0;\n        padding: 20px;\n        font-family: 'Segoe UI', Arial, sans-serif;\n    }\n    .container {\n        max-width: 600px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        padding: 30px;\n        border-radius: 10px;\n        box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n    }\n    .logo {\n        display: block;\n        margin: 0 auto 20px auto;\n        max-width: 180px;\n    }\n    h1 {\n        color: #e67e22; /* A warm, earthy tone */\n        font-size: 26px;\n        margin-top: 20px;\n        text-align: center;\n    }\n    p {\n        color: #555;\n        line-height: 1.6;\n        font-size: 16px;\n    }\n    .coupon {\n        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);\n        color: #fff;\n        padding: 25px;\n        border-radius: 8px;\n        text-align: center;\n        margin: 25px 0;\n    }\n    .coupon h3 {\n        margin-top: 0;\n        font-size: 20px;\n    }\n    .coupon .code {\n        font-weight: bold;\n        font-size: 28px;\n        font-family: monospace;\n        letter-spacing: 2px;\n        background-color: rgba(255, 255, 255, 0.2);\n        padding: 10px;\n        border-radius: 5px;\n        display: inline-block;\n        margin: 10px 0;\n    }\n    .coupon p {\n        color: #fff;\n        margin-bottom: 0;\n        font-size: 14px;\n    }\n    .footer {\n        margin-top: 30px;\n        border-top: 1px solid #ddd;\n        padding-top: 20px;\n        text-align: center;\n        font-size: 14px;\n        color: #888;\n    }\n    .footer a {\n        color: #e67e22;\n        text-decoration: none;\n    }\n    .unsubscribe {\n        font-size: 12px !important;\n        color: #aaa !important;\n    }\n</style>"
-      },
-      "id": "a2b6ec8e-1bcf-4216-b9b6-476c0d82f706",
-      "name": "Promotional email message (With Coupon",
-      "type": "n8n-nodes-base.html",
-      "position": [
-        2368,
-        1056
-      ],
-      "typeVersion": 1.2
     },
     {
       "parameters": {
@@ -257,7 +209,7 @@
       "type": "n8n-nodes-base.merge",
       "position": [
         2592,
-        928
+        924
       ],
       "typeVersion": 3
     },
@@ -286,7 +238,7 @@
     },
     {
       "parameters": {
-        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json['Body'] }}</p>\n\n  <div class=\"footer\">\n     <p>\n      <strong>Tolu John Essentials Ltd.</strong><br>\n      Suite 5, Plaza Complex, 24 Central Business District,<br>\n      FCT-Abuja, Abuja, Nigeria.<br>\n      <a href=\"tel:+2347030739128\">+234 703 073 9128</a> | \n      <a href=\"mailto:support@ntjessentials.com\">support@tjessentials.com</a>\n     </p>  \n     <p class=\"unsubscribe\">\n          No longer want these emails? <a href=\"#\">Unsubscribe</a>.\n     </p>\n  </div>\n  </body>\n</html>\n\n<style>\n    body {\n        background-color: #f4f4f4;\n        margin: 0;\n        padding: 20px;\n        font-family: 'Segoe UI', Arial, sans-serif;\n    }\n    .container {\n        max-width: 600px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        padding: 30px;\n        border-radius: 10px;\n        box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n    }\n    .logo {\n        display: block;\n        margin: 0 auto 20px auto;\n        max-width: 180px;\n    }\n    h1 {\n        color: #e67e22; /* A warm, earthy tone */\n        font-size: 26px;\n        margin-top: 20px;\n        text-align: center;\n    }\n    p {\n        color: #555;\n        line-height: 1.6;\n        font-size: 16px;\n    }\n    .coupon {\n        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);\n        color: #fff;\n        padding: 25px;\n        border-radius: 8px;\n        text-align: center;\n        margin: 25px 0;\n    }\n    .coupon h3 {\n        margin-top: 0;\n        font-size: 20px;\n    }\n    .coupon .code {\n        font-weight: bold;\n        font-size: 28px;\n        font-family: monospace;\n        letter-spacing: 2px;\n        background-color: rgba(255, 255, 255, 0.2);\n        padding: 10px;\n        border-radius: 5px;\n        display: inline-block;\n        margin: 10px 0;\n    }\n    .coupon p {\n        color: #fff;\n        margin-bottom: 0;\n        font-size: 14px;\n    }\n    .footer {\n        margin-top: 30px;\n        border-top: 1px solid #ddd;\n        padding-top: 20px;\n        text-align: center;\n        font-size: 14px;\n        color: #888;\n    }\n    .footer a {\n        color: #e67e22;\n        text-decoration: none;\n    }\n    .unsubscribe {\n        font-size: 12px !important;\n        color: #aaa !important;\n    }\n</style>"
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Customer Name'] ? $json['Customer Name']+', ' : '!' }}</h1>\n    <p>{{ $json['Body'] }}</p>\n\n  <div class=\"footer\">\n     <p>\n      <strong>Tolu John Essentials Ltd.</strong><br>\n      Suite 5, Plaza Complex, 24 Central Business District,<br>\n      FCT-Abuja, Abuja, Nigeria.<br>\n      <a href=\"tel:+2347030739128\">+234 703 073 9128</a> | \n      <a href=\"mailto:support@ntjessentials.com\">support@tjessentials.com</a>\n     </p>  \n     <p class=\"unsubscribe\">\n          No longer want these emails? <a href=\"#\">Unsubscribe</a>.\n     </p>\n  </div>\n  </body>\n</html>\n\n<style>\n    body {\n        background-color: #f4f4f4;\n        margin: 0;\n        padding: 20px;\n        font-family: 'Segoe UI', Arial, sans-serif;\n    }\n    .container {\n        max-width: 600px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        padding: 30px;\n        border-radius: 10px;\n        box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n    }\n    .logo {\n        display: block;\n        margin: 0 auto 20px auto;\n        max-width: 180px;\n    }\n    h1 {\n        color: #e67e22; /* A warm, earthy tone */\n        font-size: 26px;\n        margin-top: 20px;\n        text-align: center;\n    }\n    p {\n        color: #555;\n        line-height: 1.6;\n        font-size: 16px;\n    }\n    .coupon {\n        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);\n        color: #fff;\n        padding: 25px;\n        border-radius: 8px;\n        text-align: center;\n        margin: 25px 0;\n    }\n    .coupon h3 {\n        margin-top: 0;\n        font-size: 20px;\n    }\n    .coupon .code {\n        font-weight: bold;\n        font-size: 28px;\n        font-family: monospace;\n        letter-spacing: 2px;\n        background-color: rgba(255, 255, 255, 0.2);\n        padding: 10px;\n        border-radius: 5px;\n        display: inline-block;\n        margin: 10px 0;\n    }\n    .coupon p {\n        color: #fff;\n        margin-bottom: 0;\n        font-size: 14px;\n    }\n    .footer {\n        margin-top: 30px;\n        border-top: 1px solid #ddd;\n        padding-top: 20px;\n        text-align: center;\n        font-size: 14px;\n        color: #888;\n    }\n    .footer a {\n        color: #e67e22;\n        text-decoration: none;\n    }\n    .unsubscribe {\n        font-size: 12px !important;\n        color: #aaa !important;\n    }\n</style>"
       },
       "id": "13c4426f-f522-4127-b899-7e6397e18182",
       "name": "Standard email message (no Coupon)",
@@ -305,19 +257,19 @@
               "id": "73989d0e-667f-4227-ab41-4eb1e8c1c10e",
               "name": "Coupon",
               "type": "string",
-              "value": "={{ \"TJ-Essen\" + $now.format(\"MM\") + Math.floor(Math.random() * 1000) }}"
+              "value": "={{ \"TJ-ESSEN\" + $now.format(\"MM\") + Math.floor(Math.random() * 1000) }}"
             },
             {
               "id": "4d86d8c8-1be3-40b0-b4fd-09f9ffc24386",
               "name": "Coupon Value",
               "type": "string",
-              "value": "=20% off your next purchase of our {{ $json['Item Purchased'] }} range or any fragrance product!"
+              "value": "=Enjoy 20% off your next purchase of our {{ $json['Item Purchased '] }} range or any fragrance product!"
             },
             {
               "id": "f73b8a70-5bf6-45c2-8061-d10f95b199a8",
               "name": "Coupon Terms",
               "type": "string",
-              "value": "=Valid until {{ $today.plus({days: 14}).format(\"d. MMM. y\") }} | minimum purchase amount: 20$ "
+              "value": "=Valid until {{ $today.plus({days: 14}).format(\"d. MMM. y\") }} | minimum purchase amount: ₦10,000 "
             }
           ]
         },
@@ -329,34 +281,60 @@
       "type": "n8n-nodes-base.set",
       "position": [
         2144,
-        1056
+        1048
       ],
       "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-r1-distill-llama-70b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1192,
+        1052
+      ],
+      "id": "baddf661-db5a-463e-96a6-90af5c8a7b32",
+      "name": "Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "45vEjqXrgijuDoCV",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "71e36c09-6e24-4eb2-9b1a-4fb3bb4b4536",
+      "name": "Final Promotional email message1",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2368,
+        684
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.output['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.icons8.com/?size=100&id=Kdgekc9HP6SX&format=png&color=000000\"/>\n    <h1>Hello {{ $json['Customer Name'] ? $json['Customer Name']+', ' : '!' }}</h1>\n    <p>{{ $json.output['Body'] }}</p>\n    \n    <div class=\"coupon\">\n        <h3>Here's a Coupon for you!<br>\n        {{ $json['Coupon Value'] }}</h3>\n        <h4 class=\"code\">{{ $json['Coupon'] }}</h4>\n        <p>{{ $json['Coupon Terms'] }}</p>\n    </div>\n  <div class=\"footer\">\n     <p>\n      <strong>Tolu John Essentials Ltd.</strong><br>\n      Suite 5, Plaza Complex, 24 Central Business District,<br>\n      FCT-Abuja, Abuja, Nigeria.<br>\n      <a href=\"tel:+2347030739128\">+234 703 073 9128</a> | \n      <a href=\"mailto:support@ntjessentials.com\">support@tjessentials.com</a>\n     </p>  \n     <p class=\"unsubscribe\">\n          No longer want these emails? <a href=\"#\">Unsubscribe</a>.\n     </p>\n  </div>\n  </body>\n</html>\n\n<style>\n    body {\n        background-color: #f4f4f4;\n        margin: 0;\n        padding: 20px;\n        font-family: 'Segoe UI', Arial, sans-serif;\n    }\n    .container {\n        max-width: 600px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        padding: 30px;\n        border-radius: 10px;\n        box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n    }\n    .logo {\n        display: block;\n        margin: 0 auto 20px auto;\n        max-width: 180px;\n    }\n    h1 {\n        color: #e67e22; /* A warm, earthy tone */\n        font-size: 26px;\n        margin-top: 20px;\n        text-align: center;\n    }\n    p {\n        color: #555;\n        line-height: 1.6;\n        font-size: 16px;\n    }\n    .coupon {\n        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);\n        color: #fff;\n        padding: 25px;\n        border-radius: 8px;\n        text-align: center;\n        margin: 25px 0;\n    }\n    .coupon h3 {\n        margin-top: 0;\n        font-size: 20px;\n    }\n    .coupon .code {\n        font-weight: bold;\n        font-size: 28px;\n        font-family: monospace;\n        letter-spacing: 2px;\n        background-color: rgba(255, 255, 255, 0.2);\n        padding: 10px;\n        border-radius: 5px;\n        display: inline-block;\n        margin: 10px 0;\n    }\n    .coupon p {\n        color: #fff;\n        margin-bottom: 0;\n        font-size: 14px;\n    }\n    .footer {\n        margin-top: 30px;\n        border-top: 1px solid #ddd;\n        padding-top: 20px;\n        text-align: center;\n        font-size: 14px;\n        color: #888;\n    }\n    .footer a {\n        color: #e67e22;\n        text-decoration: none;\n    }\n    .unsubscribe {\n        font-size: 12px !important;\n        color: #aaa !important;\n    }\n</style>"
+      },
+      "id": "a2b6ec8e-1bcf-4216-b9b6-476c0d82f706",
+      "name": "Promotional email message (With Coupon)",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        2368,
+        1048
+      ],
+      "typeVersion": 1.2
     }
   ],
   "connections": {
-    "The composed E-Mail + Prev Data": {
-      "main": [
-        [
-          {
-            "node": "Send Customer Engagement Email",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenRouter Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Analyze Sentiment & Draft Response",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Start Feedback Processing": {
       "main": [
         [
@@ -444,7 +422,7 @@
             "index": 0
           },
           {
-            "node": "The composed E-Mail + Prev Data",
+            "node": "Final Promotional email message1",
             "type": "main",
             "index": 1
           }
@@ -459,17 +437,6 @@
             "node": "Final Promotional email message",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Promotional email message (With Coupon": {
-      "main": [
-        [
-          {
-            "node": "Final Promotional email message",
-            "type": "main",
-            "index": 1
           }
         ]
       ]
@@ -489,7 +456,7 @@
       "main": [
         [
           {
-            "node": "The composed E-Mail + Prev Data",
+            "node": "Final Promotional email message1",
             "type": "main",
             "index": 0
           }
@@ -500,9 +467,42 @@
       "main": [
         [
           {
-            "node": "Promotional email message (With Coupon",
+            "node": "Promotional email message (With Coupon)",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Sentiment & Draft Response",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Promotional email message1": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Engagement Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Promotional email message (With Coupon)": {
+      "main": [
+        [
+          {
+            "node": "Final Promotional email message",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
