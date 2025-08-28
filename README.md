@@ -120,17 +120,17 @@ Use this file to simulate the workflow locally:
 ---
 
 ### 📁 Recommended Folder Structure
-Customer-Feedback-Engagement-Workflow/
+Customer-Feedback-Engagement-Workflow/   
 │
-├── README.md
-├── LICENSE
-├── workflow.json
-├── sample-data/
-│   └── customer-feedback-sheet.csv
-├── assets/
-│   └── logo.svg
-├── docs/
-│   └── setup-guide.md
+├── README.md   
+├── LICENSE   
+├── workflow.json   
+├── sample-data/   
+│   └── customer-feedback-sheet.csv   
+├── assets/   
+│   └── logo.svg   
+├── docs/   
+│   └── setup-guide.md   
 
 ---
 
