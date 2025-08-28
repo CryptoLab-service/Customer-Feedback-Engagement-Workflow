@@ -54,8 +54,6 @@ Trigger the workflow manually or set up a schedule. You should receive a persona
 ### Done!
 You’re now ready to engage customers with AI-powered feedback responses.
 
-```bash
-
 ---
 
 ## 🖼️ `assets/logo.svg`
