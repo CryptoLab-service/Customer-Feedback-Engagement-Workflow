@@ -122,7 +122,7 @@ Use this file to simulate the workflow locally:
 ## 🧑‍💻 Author
 OLUWALOWO John   
 📧 oluwalowojohn@gmail.com   
-🎨 [LinkedIn](https://linkedin.com/in/oluwalowojohn/)
+🎨 [LinkedIn](https://linkedin.com/in/oluwalowojohn/)   
     🐙 [GitHub](https://github.com/oluwalowojohn)
 
 ---
@@ -133,6 +133,4 @@ This project is licensed under the MIT License. Feel free to fork, adapt, and co
 ---
 
 ## 🙌 Contributions
-Contributions, ideas, and bug reports are welcome! Feel free to fork this repository and submit a Pull Request.
-
-If you have specific ideas for making the Nigerian tone even better or want to add support for other messaging platforms (e.g., WhatsApp via Twilio), please open an issue.
+Contributions, ideas, and bug reports are welcome! Feel free to fork this repository and submit a Pull Request. If you have specific ideas for making the Nigerian tone even better or want to add support for other messaging platforms (e.g., WhatsApp via Twilio), please open an issue.
