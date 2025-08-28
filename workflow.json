@@ -2,179 +2,6 @@
   "nodes": [
     {
       "parameters": {
-        "text": "=Item Purchased: {{ $json['Item Purchased'] }} \nFeedback: {{ $json.Feedback }}\nCampaignTarget: {{ $json['Campaign Target'] }}\nFlavour\": {{ $json.Flavour }}\nShould we send a coupon to make the customer happy? Yes/No",
-        "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"Headline\",\"Body\",\"SendCoupon\"],\n  \"properties\": {\n    \"Headline\": {\n      \"type\": \"string\"\n    },\n    \"Body\": {\n      \"type\": \"string\"\n    },\n    \"SendCoupon\": {\n      \"type\": \"boolean\"\n    }\n  }\n}",
-        "options": {
-          "systemPromptTemplate": "=Use the provided JSON input to determine the sentiment of the product feedback. Then generate:\n- A Headline\n- A Body (no greeting or salutation)\n- A boolean value for SendCoupon\n\nIf the feedback is negative or suggests dissatisfaction, include a coupon offer in the body. The coupon code will appear below the email.\n\nCampaign Target: {{ $json['Campaign Target'] }}\nFlavour: {{ $json['Flavour'] }}\n\nAvoid any greeting. Be witty, cool, and direct. Acknowledge critique.\n"
-        }
-      },
-      "id": "3b152bdc-acb8-4f37-8b91-1ab02c0e9532",
-      "name": "Information Extractor",
-      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
-      "position": [
-        1120,
-        832
-      ],
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "errorMessage": "Unexpected Langchain Output"
-      },
-      "id": "716e4281-cf18-4cc7-b5ed-4de0308bf9aa",
-      "name": "AI did fail us1",
-      "type": "n8n-nodes-base.stopAndError",
-      "position": [
-        1920,
-        1056
-      ],
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "73989d0e-667f-4227-ab41-4eb1e8c1c10e",
-              "name": "Coupon",
-              "type": "string",
-              "value": "F4k3ItT1llY0uM4k3It"
-            },
-            {
-              "id": "4d86d8c8-1be3-40b0-b4fd-09f9ffc24386",
-              "name": "Coupon Value",
-              "type": "string",
-              "value": "20% of any purchase"
-            },
-            {
-              "id": "f73b8a70-5bf6-45c2-8061-d10f95b199a8",
-              "name": "Coupon Terms",
-              "type": "string",
-              "value": "=Valid until {{ $today.plus({days: 14}).format(\"d. MMM. y\") }} | minimum purchase amount: 20$ "
-            }
-          ]
-        },
-        "includeOtherFields": true,
-        "options": {}
-      },
-      "id": "1dc51ad5-e605-4cad-9a5b-3b20eabd9797",
-      "name": "Fake coupon",
-      "type": "n8n-nodes-base.set",
-      "position": [
-        2144,
-        1056
-      ],
-      "typeVersion": 3.4
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineByPosition",
-        "options": {}
-      },
-      "id": "a95ce7c4-c592-40c7-9dfa-db0e37d5b71f",
-      "name": "AI Output + Prev Data",
-      "type": "n8n-nodes-base.merge",
-      "position": [
-        1472,
-        960
-      ],
-      "typeVersion": 3
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "version": 2,
-            "leftValue": "",
-            "caseSensitive": true,
-            "typeValidation": "strict"
-          },
-          "combinator": "and",
-          "conditions": [
-            {
-              "id": "9b4ced26-dd86-4ae4-8f69-6177ec42c827",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              },
-              "leftValue": "Headline",
-              "rightValue": ""
-            },
-            {
-              "id": "7723102c-43d2-48df-82f6-5bb45ddf615c",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              },
-              "leftValue": "Body",
-              "rightValue": ""
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "bb0474a1-425c-4a02-a13e-385272091189",
-      "name": "Is the result valid?",
-      "type": "n8n-nodes-base.if",
-      "position": [
-        1696,
-        960
-      ],
-      "typeVersion": 2.2
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "version": 2,
-            "leftValue": "",
-            "caseSensitive": true,
-            "typeValidation": "strict"
-          },
-          "combinator": "and",
-          "conditions": [
-            {
-              "id": "967f37a1-a600-46a2-82cf-f340dd3c7a96",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              },
-              "leftValue": "={{ $json.SendCoupon }}",
-              "rightValue": ""
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "b39e0b98-6824-4265-94a0-fe12154f2ad4",
-      "name": "Coupon them or not to Coupon them",
-      "type": "n8n-nodes-base.if",
-      "position": [
-        1920,
-        864
-      ],
-      "typeVersion": 2.2
-    },
-    {
-      "parameters": {
-        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json['Body'] }}</p>\n    \n  <div class=\"footer\">\n   <p>\n    Definitely not a real company Lmt.<br>\n    Also not a real street 123<br>\n    Unreal Town\n   </p>  \n</div> \n </div>\n \n  \n</body>\n</html>\n\n<style>\n.logo {\n  margin-top: 20px;\n }\n.container {\n  background-color: #ffffff;\n  font-family: sans-serif;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  margin-top: 30px;\n}\n\np {\n  color: #606060;\n  line-height: 1.6;\n}\n\nh2 {\n  color: #909399;\n  font-size: 20px;\n  font-weight: bold;\n  padding: 8px;\n}\n\n.footer {\n  margin-top: 30px;\n}\n\n.footer > p {\n    font-size: 14px;\n  color: #ccc;\n }\n\n</style>"
-      },
-      "id": "13c4426f-f522-4127-b899-7e6397e18182",
-      "name": "Html Template for our Email",
-      "type": "n8n-nodes-base.html",
-      "position": [
-        2144,
-        640
-      ],
-      "typeVersion": 1.2
-    },
-    {
-      "parameters": {
         "mode": "combine",
         "combineBy": "combineByPosition",
         "options": {}
@@ -187,57 +14,6 @@
         688
       ],
       "typeVersion": 3
-    },
-    {
-      "parameters": {
-        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.output['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json.output['Body'] }}</p>\n    \n    <div class=\"coupon\">\n        <h3>Here's a Coupon for you!<br>\n        {{ $json['Coupon Value'] }}</h3>\n        <h4 class=\"code\">{{ $json['Coupon'] }}</h4>\n        <p>{{ $json['Coupon Terms'] }}</p>\n    </div>\n  <div class=\"footer\">\n   <p>\n    Definitely not a real company Lmt.<br>\n    Also not a real street 123<br>\n    Unreal Town\n   </p>  \n</div> \n </div>\n \n  \n</body>\n</html>\n\n<style>\n.logo {\n  margin-top: 20px;\n }\n.container {\n  background-color: #ffffff;\n  font-family: sans-serif;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  margin-top: 30px;\n}\n\np {\n  color: #606060;\n  line-height: 1.6;\n}\n\nh2 {\n  color: #909399;\n  font-size: 20px;\n  font-weight: bold;\n  padding: 8px;\n}\n\n.coupon {\n  background: #ff6d5a;\n  color: #fff;\n  padding: 20px;\n}\n.coupon p {\n  color: #fff;\n}\n  \n.coupon .code {\n  font-weight: bold;\n  font-size: 24px;\n  font-family: monospace;\n }\n\n.footer {\n  margin-top: 30px;\n}\n\n.footer > p {\n    font-size: 14px;\n  color: #ccc;\n }\n\n</style>"
-      },
-      "id": "a2b6ec8e-1bcf-4216-b9b6-476c0d82f706",
-      "name": "Html Template for our Email with a Coupon",
-      "type": "n8n-nodes-base.html",
-      "position": [
-        2368,
-        1056
-      ],
-      "typeVersion": 1.2
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineByPosition",
-        "options": {}
-      },
-      "id": "2d5dd858-cf61-4136-b405-e6ad4a372725",
-      "name": "The composed E-Mail with Coupon + Prev Data",
-      "type": "n8n-nodes-base.merge",
-      "position": [
-        2592,
-        928
-      ],
-      "typeVersion": 3
-    },
-    {
-      "parameters": {
-        "sendTo": "oluwalowojohn@gmail.com",
-        "subject": "={{ $json.output.Headline }}",
-        "message": "={{ $json.html }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        2816,
-        784
-      ],
-      "id": "c79b780b-9b44-4b52-910c-536cad377d63",
-      "name": "Send a message",
-      "webhookId": "82a4eb61-1f62-4823-9dd5-dc9349e9ad48",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "d5ljNKIIRxJqX2vl",
-          "name": "Gmail account"
-        }
-      }
     },
     {
       "parameters": {
@@ -332,126 +108,238 @@
         960
       ],
       "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "text": "=Item Purchased: {{ $json['Item Purchased'] }} \nFeedback: {{ $json.Feedback }}\nCampaignTarget: {{ $json['Campaign Target'] }}\nFlavour\": {{ $json.Flavour }}\nShould we send a coupon to make the customer happy? Yes/No",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"Headline\",\"Body\",\"SendCoupon\"],\n  \"properties\": {\n    \"Headline\": {\n      \"type\": \"string\"\n    },\n    \"Body\": {\n      \"type\": \"string\"\n    },\n    \"SendCoupon\": {\n      \"type\": \"boolean\"\n    }\n  }\n}",
+        "options": {
+          "systemPromptTemplate": "=Use the provided JSON input to determine the sentiment of the product feedback. Then generate:\n- A Headline\n- A Body (no greeting or salutation)\n- A boolean value for SendCoupon\n\nIf the feedback is negative or suggests dissatisfaction, include a coupon offer in the body. The coupon code will appear below the email.\n\nCampaign Target: {{ $json['Campaign Target'] }}\nFlavour: {{ $json['Flavour'] }}\n\nAvoid any greeting. Use a warm, friendly, and slightly playful Nigerian tone. You can use phrases like 'our dear customer', 'well done', or 'you try well' if it fits. Be relatable and appreciative. The goal is to make the customer feel valued and understood. Acknowledge their feedback sincerely.\n"
+        }
+      },
+      "id": "3b152bdc-acb8-4f37-8b91-1ab02c0e9532",
+      "name": "Analyze Sentiment & Draft Response",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "position": [
+        1120,
+        832
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "a95ce7c4-c592-40c7-9dfa-db0e37d5b71f",
+      "name": "AI Draft + Customer Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1472,
+        960
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "9b4ced26-dd86-4ae4-8f69-6177ec42c827",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "Headline",
+              "rightValue": ""
+            },
+            {
+              "id": "7723102c-43d2-48df-82f6-5bb45ddf615c",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "Body",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bb0474a1-425c-4a02-a13e-385272091189",
+      "name": "If AI generated headline & body are valid",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1696,
+        960
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "errorMessage": "Unexpected Langchain Output"
+      },
+      "id": "716e4281-cf18-4cc7-b5ed-4de0308bf9aa",
+      "name": "Invalid AI Output",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        1920,
+        1056
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "967f37a1-a600-46a2-82cf-f340dd3c7a96",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.SendCoupon }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b39e0b98-6824-4265-94a0-fe12154f2ad4",
+      "name": "Send Coupon (when needed)",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1920,
+        864
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.output['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json.output['Body'] }}</p>\n    \n    <div class=\"coupon\">\n        <h3>Here's a Coupon for you!<br>\n        {{ $json['Coupon Value'] }}</h3>\n        <h4 class=\"code\">{{ $json['Coupon'] }}</h4>\n        <p>{{ $json['Coupon Terms'] }}</p>\n    </div>\n  <div class=\"footer\">\n     <p>\n      <strong>Tolu John Essentials Ltd.</strong><br>\n      Suite 5, Plaza Complex, 24 Central Business District,<br>\n      FCT-Abuja, Abuja, Nigeria.<br>\n      <a href=\"tel:+2347030739128\">+234 703 073 9128</a> | \n      <a href=\"mailto:support@ntjessentials.com\">support@tjessentials.com</a>\n     </p>  \n     <p class=\"unsubscribe\">\n          No longer want these emails? <a href=\"#\">Unsubscribe</a>.\n     </p>\n  </div>\n  </body>\n</html>\n\n<style>\n    body {\n        background-color: #f4f4f4;\n        margin: 0;\n        padding: 20px;\n        font-family: 'Segoe UI', Arial, sans-serif;\n    }\n    .container {\n        max-width: 600px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        padding: 30px;\n        border-radius: 10px;\n        box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n    }\n    .logo {\n        display: block;\n        margin: 0 auto 20px auto;\n        max-width: 180px;\n    }\n    h1 {\n        color: #e67e22; /* A warm, earthy tone */\n        font-size: 26px;\n        margin-top: 20px;\n        text-align: center;\n    }\n    p {\n        color: #555;\n        line-height: 1.6;\n        font-size: 16px;\n    }\n    .coupon {\n        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);\n        color: #fff;\n        padding: 25px;\n        border-radius: 8px;\n        text-align: center;\n        margin: 25px 0;\n    }\n    .coupon h3 {\n        margin-top: 0;\n        font-size: 20px;\n    }\n    .coupon .code {\n        font-weight: bold;\n        font-size: 28px;\n        font-family: monospace;\n        letter-spacing: 2px;\n        background-color: rgba(255, 255, 255, 0.2);\n        padding: 10px;\n        border-radius: 5px;\n        display: inline-block;\n        margin: 10px 0;\n    }\n    .coupon p {\n        color: #fff;\n        margin-bottom: 0;\n        font-size: 14px;\n    }\n    .footer {\n        margin-top: 30px;\n        border-top: 1px solid #ddd;\n        padding-top: 20px;\n        text-align: center;\n        font-size: 14px;\n        color: #888;\n    }\n    .footer a {\n        color: #e67e22;\n        text-decoration: none;\n    }\n    .unsubscribe {\n        font-size: 12px !important;\n        color: #aaa !important;\n    }\n</style>"
+      },
+      "id": "a2b6ec8e-1bcf-4216-b9b6-476c0d82f706",
+      "name": "Promotional email message (With Coupon",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        2368,
+        1056
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "2d5dd858-cf61-4136-b405-e6ad4a372725",
+      "name": "Final Promotional email message",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2592,
+        928
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "sendTo": "oluwalowojohn@gmail.com",
+        "subject": "={{ $json.output.Headline }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2816,
+        784
+      ],
+      "id": "c79b780b-9b44-4b52-910c-536cad377d63",
+      "name": "Send Customer Engagement Email",
+      "webhookId": "82a4eb61-1f62-4823-9dd5-dc9349e9ad48",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "d5ljNKIIRxJqX2vl",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json['Headline'] }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <img class=\"logo\" src=\"https://img.logoipsum.com/264.svg\"/>\n    <h1>Hey {{ $json['Custome Name'] ? $json['Custome Name']+', ' : '!' }}</h1>\n    <p>{{ $json['Body'] }}</p>\n\n  <div class=\"footer\">\n     <p>\n      <strong>Tolu John Essentials Ltd.</strong><br>\n      Suite 5, Plaza Complex, 24 Central Business District,<br>\n      FCT-Abuja, Abuja, Nigeria.<br>\n      <a href=\"tel:+2347030739128\">+234 703 073 9128</a> | \n      <a href=\"mailto:support@ntjessentials.com\">support@tjessentials.com</a>\n     </p>  \n     <p class=\"unsubscribe\">\n          No longer want these emails? <a href=\"#\">Unsubscribe</a>.\n     </p>\n  </div>\n  </body>\n</html>\n\n<style>\n    body {\n        background-color: #f4f4f4;\n        margin: 0;\n        padding: 20px;\n        font-family: 'Segoe UI', Arial, sans-serif;\n    }\n    .container {\n        max-width: 600px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        padding: 30px;\n        border-radius: 10px;\n        box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n    }\n    .logo {\n        display: block;\n        margin: 0 auto 20px auto;\n        max-width: 180px;\n    }\n    h1 {\n        color: #e67e22; /* A warm, earthy tone */\n        font-size: 26px;\n        margin-top: 20px;\n        text-align: center;\n    }\n    p {\n        color: #555;\n        line-height: 1.6;\n        font-size: 16px;\n    }\n    .coupon {\n        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);\n        color: #fff;\n        padding: 25px;\n        border-radius: 8px;\n        text-align: center;\n        margin: 25px 0;\n    }\n    .coupon h3 {\n        margin-top: 0;\n        font-size: 20px;\n    }\n    .coupon .code {\n        font-weight: bold;\n        font-size: 28px;\n        font-family: monospace;\n        letter-spacing: 2px;\n        background-color: rgba(255, 255, 255, 0.2);\n        padding: 10px;\n        border-radius: 5px;\n        display: inline-block;\n        margin: 10px 0;\n    }\n    .coupon p {\n        color: #fff;\n        margin-bottom: 0;\n        font-size: 14px;\n    }\n    .footer {\n        margin-top: 30px;\n        border-top: 1px solid #ddd;\n        padding-top: 20px;\n        text-align: center;\n        font-size: 14px;\n        color: #888;\n    }\n    .footer a {\n        color: #e67e22;\n        text-decoration: none;\n    }\n    .unsubscribe {\n        font-size: 12px !important;\n        color: #aaa !important;\n    }\n</style>"
+      },
+      "id": "13c4426f-f522-4127-b899-7e6397e18182",
+      "name": "Standard email message (no Coupon)",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        2144,
+        640
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73989d0e-667f-4227-ab41-4eb1e8c1c10e",
+              "name": "Coupon",
+              "type": "string",
+              "value": "={{ \"TJ-Essen\" + $now.format(\"MM\") + Math.floor(Math.random() * 1000) }}"
+            },
+            {
+              "id": "4d86d8c8-1be3-40b0-b4fd-09f9ffc24386",
+              "name": "Coupon Value",
+              "type": "string",
+              "value": "=20% off your next purchase of our {{ $json['Item Purchased'] }} range or any fragrance product!"
+            },
+            {
+              "id": "f73b8a70-5bf6-45c2-8061-d10f95b199a8",
+              "name": "Coupon Terms",
+              "type": "string",
+              "value": "=Valid until {{ $today.plus({days: 14}).format(\"d. MMM. y\") }} | minimum purchase amount: 20$ "
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "1dc51ad5-e605-4cad-9a5b-3b20eabd9797",
+      "name": "Generate Coupon Details",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2144,
+        1056
+      ],
+      "typeVersion": 3.4
     }
   ],
   "connections": {
-    "Information Extractor": {
-      "main": [
-        [
-          {
-            "node": "AI Output + Prev Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fake coupon": {
-      "main": [
-        [
-          {
-            "node": "Html Template for our Email with a Coupon",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Output + Prev Data": {
-      "main": [
-        [
-          {
-            "node": "Is the result valid?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Is the result valid?": {
-      "main": [
-        [
-          {
-            "node": "Coupon them or not to Coupon them",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "AI did fail us1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Coupon them or not to Coupon them": {
-      "main": [
-        [
-          {
-            "node": "Html Template for our Email",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "The composed E-Mail + Prev Data",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Fake coupon",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "The composed E-Mail with Coupon + Prev Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Html Template for our Email": {
-      "main": [
-        [
-          {
-            "node": "The composed E-Mail + Prev Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "The composed E-Mail + Prev Data": {
       "main": [
         [
           {
-            "node": "Send a message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Html Template for our Email with a Coupon": {
-      "main": [
-        [
-          {
-            "node": "The composed E-Mail with Coupon + Prev Data",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "The composed E-Mail with Coupon + Prev Data": {
-      "main": [
-        [
-          {
-            "node": "Send a message",
+            "node": "Send Customer Engagement Email",
             "type": "main",
             "index": 0
           }
@@ -462,7 +350,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "Information Extractor",
+            "node": "Analyze Sentiment & Draft Response",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -495,14 +383,126 @@
       "main": [
         [
           {
-            "node": "Information Extractor",
+            "node": "Analyze Sentiment & Draft Response",
             "type": "main",
             "index": 0
           },
           {
-            "node": "AI Output + Prev Data",
+            "node": "AI Draft + Customer Data",
             "type": "main",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "Analyze Sentiment & Draft Response": {
+      "main": [
+        [
+          {
+            "node": "AI Draft + Customer Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Draft + Customer Data": {
+      "main": [
+        [
+          {
+            "node": "If AI generated headline & body are valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If AI generated headline & body are valid": {
+      "main": [
+        [
+          {
+            "node": "Send Coupon (when needed)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invalid AI Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Coupon (when needed)": {
+      "main": [
+        [
+          {
+            "node": "Standard email message (no Coupon)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "The composed E-Mail + Prev Data",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Generate Coupon Details",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Final Promotional email message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Promotional email message (With Coupon": {
+      "main": [
+        [
+          {
+            "node": "Final Promotional email message",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Final Promotional email message": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Engagement Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standard email message (no Coupon)": {
+      "main": [
+        [
+          {
+            "node": "The composed E-Mail + Prev Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Coupon Details": {
+      "main": [
+        [
+          {
+            "node": "Promotional email message (With Coupon",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
